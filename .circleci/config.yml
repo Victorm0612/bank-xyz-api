@@ -51,6 +51,4 @@ workflows:
            filters:
              branches:
                only: 
-                 - master # only run deploy-via-git job on some of this branches
-                 - develop
-                 - release
+                 - develop # only run deploy-via-git job on some of this branches
