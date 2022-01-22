@@ -6,7 +6,7 @@ This is the BackEnd of xyz-bank project of the WWW course at Universidad del Val
 
 To run the Django project it is necessary to do it from a Linux distribution, if you are a Windows user, the recommendation is to use **WSL**.
 
-- [gide](https://docs.microsoft.com/en-us/windows/wsl/install-manual)
+- [guide](https://docs.microsoft.com/en-us/windows/wsl/install-manual)
 
 After you have WSL on your computer, install en vscode an extension called **Remote - WSL**. Then run a new WSL Window and open a terminal.
 
