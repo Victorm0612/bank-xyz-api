@@ -40,7 +40,7 @@ def UpdateUser(args):
     if  User.objects.filter(id = args[0]).exists():
         userToMod= User.objects.get(id = args[0])
         if args[1] != '':
-            userToMod.firsName = args[1]
+            userToMod.firstName = args[1]
         
         if args[2] != '':
             userToMod.lastName = args[2]
