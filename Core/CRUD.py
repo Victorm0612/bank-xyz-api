@@ -1,5 +1,7 @@
 from ast import arg
 from datetime import datetime
+from operator import truediv
+from turtle import Turtle
 from Core.models import *
 
 #
@@ -22,9 +24,9 @@ def CreateUser(args):
 #
 
 def ReadUser(args):
-    search = User.objects.filter(docType__icontains=args[2],docNumber__icontains=args[3])
+    search = User.objects.filter(docNumber__icontains=args[0])
     search.order_by('id')
-    return search
+    return search.values()
 
 
     
@@ -35,30 +37,34 @@ def ReadUser(args):
 def UpdateUser(args):
 
      # args order id, firstName, lastName, docType, docNumber, role, email, password
-    userToMod= User.objects.get(id = args[0])
+    if  User.objects.filter(id = args[0]).exists():
+        userToMod= User.objects.get(id = args[0])
+        if args[1] != '':
+            userToMod.firsName = args[1]
+        
+        if args[2] != '':
+            userToMod.lastName = args[2]
+        
+        if args[3] != '':
+            userToMod.docType = args[3]
+        
+        if args[4] != '':
+            userToMod.docNumber = args[4]
+        
+        if args[5] != '':
+            userToMod.role = args[5]
+        
+        if args[6] != '':
+            userToMod.email = args[6]
+        
+        if args[7] != '':
+            userToMod.password = args[7]
 
-    if args[1] != '':
-        userToMod.firsName = args[1]
+        userToMod.save()
+        return True
+    else : 
+        return False
     
-    if args[2] != '':
-        userToMod.lastName = args[2]
-    
-    if args[3] != '':
-        userToMod.docType = args[3]
-    
-    if args[4] != '':
-        userToMod.docNumber = args[4]
-    
-    if args[5] != '':
-        userToMod.role = args[5]
-    
-    if args[6] != '':
-        userToMod.email = args[6]
-    
-    if args[7] != '':
-        userToMod.password = args[7]
-
-    userToMod.save()
 
 
 
@@ -100,7 +106,7 @@ def ReadBankTeller(args):
     # args order name
     search = BankTeller.objects.filter(name__icontains = args[0])
     search.order_by('id')
-    return search
+    return search.values()
     
 #
 #  Update a bank teller in the table BankTeller
@@ -108,10 +114,14 @@ def ReadBankTeller(args):
 #
 def UpdateBankTeller(args):
     # args order id, name
-    tellerToMod= BankTeller.objects.get(id = args[0])
-    if args[1] != '':
-        tellerToMod.name = args[1]
-    tellerToMod.save()
+    if BankTeller.objects.filter(id = args[0]).exists():
+        tellerToMod= BankTeller.objects.get(id = args[0])
+        if args[1] != '':
+            tellerToMod.name = args[1]
+        tellerToMod.save()
+        return True
+    else:
+        return False
 
     
     
@@ -149,9 +159,9 @@ def CreateService(args):
 def ReadService(args):
 
     # args order serviceType, teller_id_id
-    search = Service.objects.filter(serviceType__icontains = int(args[0]),teller_id_id__icontains=int(args[1]))
+    search = Service.objects.filter(serviceName__icontains = int(args[0]))
     search.order_by('id')
-    return search
+    return search.values()
     
 #
 #  Update a Service in the table Service
@@ -159,20 +169,24 @@ def ReadService(args):
 #
 def UpdateService(args):
 
-    ServiceToMod= Service.objects.get(id = args[0])
+    if Service.objects.filter(id = args[0]).exists():
+        ServiceToMod= Service.objects.get(id = args[0])
 
-    if args[1] != '':
-        ServiceToMod.serviceName = args[1]
-    
-    if args[2] != '':
-        ServiceToMod.description = args[2]
-    
-    if args[3] != '':
-        ServiceToMod.serviceType = args[3]
-    
-    if args[4] != '':
-        ServiceToMod.teller_id_id = args[4]
-    ServiceToMod.save()
+        if args[1] != '':
+            ServiceToMod.serviceName = args[1]
+        
+        if args[2] != '':
+            ServiceToMod.description = args[2]
+        
+        if args[3] != '':
+            ServiceToMod.serviceType = args[3]
+        
+        if args[4] != '':
+            ServiceToMod.teller_id_id = args[4]
+        ServiceToMod.save()
+        return True
+    else:
+        return False
 
     
 #
@@ -210,36 +224,41 @@ def CreateTicket(args):
 #
 def ReadTicket(args):
 
-    search = Ticket.objects.filter(orderNumber__icontains = int(args[0]),arrivalDate__icontains=args[1],serviceId_id__icontains=int(args[2]), userId_id__icontains =int(args[3]))
+    search = Ticket.objects.filter(orderNumber__icontains = int(args[0]))
     search.order_by('id')
-    return search
+    return search.values()
 #
 #  Update a Ticket in the table Ticket
 #   args is an array of the arguments received
 #
 def UpdateTicket(args):
 
-    ticketToMod= Ticket.objects.get(id = args[0])
+    if Ticket.objects.filter(id = args[0]).exists():
 
-    if args[1] != '':
-        ticketToMod.orderNumber = int(args[1])
-    
-    if args[2] != '':
-        ticketToMod.state = int(args[2])
-    
-    if args[3] != '':
-        ticketToMod.arrivalDate = args[3]
-    
-    if args[4] != '':
-        ticketToMod.arrivalTime = args[4]
-    
-    if args[4] != '':
-        ticketToMod.serviceId_id = int(args[5])
-    
-    if args[4] != '':
-        ticketToMod.userId_id = int(args[6])
+        ticketToMod= Ticket.objects.get(id = args[0])
+
+        if args[1] != '':
+            ticketToMod.orderNumber = int(args[1])
         
-    ticketToMod.save()
+        if args[2] != '':
+            ticketToMod.state = int(args[2])
+        
+        if args[3] != '':
+            ticketToMod.arrivalDate = args[3]
+        
+        if args[4] != '':
+            ticketToMod.arrivalTime = args[4]
+        
+        if args[4] != '':
+            ticketToMod.serviceId_id = int(args[5])
+        
+        if args[4] != '':
+            ticketToMod.userId_id = int(args[6])
+
+        ticketToMod.save()
+        return True
+    else:
+        return False
     
 #
 # Delete a Ticket in the table Ticket
