@@ -24,9 +24,9 @@ def createUsr(request):
     send = [firstName,lastName,doctype,docNumber,role,email,password]
 
     if CreateUser(send):
-        return JsonResponse(False, safe=False)
+        return JsonResponse(True, safe=False)
     else:
-        return JsonResponse(True, safe= False)
+        return JsonResponse(False, safe= False)
 
 
 def readUsr(request,docNumber):
@@ -54,9 +54,9 @@ def modifyUsr(request):
     send = [idUser,firstName,lastName,doctype,docNumber,role,email,password]
 
     if UpdateUser(send):
-        return JsonResponse(False,safe=False)
-    else:
         return JsonResponse(True,safe=False)
+    else:
+        return JsonResponse(False,safe=False)
 
 
 @csrf_exempt
@@ -65,9 +65,9 @@ def delUsr(request,idToDelete):
     send=[idToDelete]
 
     if DeleteUser(send):
-        return JsonResponse(False,safe=False)
-    else:
         return JsonResponse(True,safe=False)
+    else:
+        return JsonResponse(False,safe=False)
 
 
 @csrf_exempt
@@ -81,9 +81,9 @@ def createTeller(request):
     send = [name]
 
     if CreateBankTeller(send):
-        return JsonResponse(False,safe=False)
-    else:
         return JsonResponse(True,safe=False)
+    else:
+        return JsonResponse(False,safe=False)
 
 def readTeller(request, name):
 
@@ -107,9 +107,9 @@ def modifyTeller(request):
     send = [idTeller,name]
 
     if UpdateBankTeller(send):
-        return JsonResponse(False, safe=False)
-    else:
         return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
 
 
 @csrf_exempt
@@ -119,9 +119,9 @@ def delTeller(request,idToDelete):
     send=[idToDelete]
 
     if DeleteBankTeller(send):
-        return JsonResponse(False, safe=False)
-    else:
         return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
 
 
 @csrf_exempt
@@ -140,9 +140,9 @@ def createServ(request):
 
 
     if CreateService(send):
-        return JsonResponse(False, safe=False)
-    else:
         return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
 
 def readServ(request,serviceName):
 
@@ -170,9 +170,9 @@ def modifyServ(request):
     send = [idService,serviceName,description,serviceType,teller_id]
 
     if UpdateService(send):
-        return JsonResponse(False, safe=False)
-    else:
         return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
 
 
 @csrf_exempt
@@ -183,9 +183,9 @@ def delServ(request):
     send=[idService]
 
     if DeleteService(send):
-        return JsonResponse(False, safe=False)
-    else:
         return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
 
 @csrf_exempt
 def createTick(request):
@@ -203,9 +203,9 @@ def createTick(request):
 
 
     if CreateTicket(send):
-        return JsonResponse(False, safe=False)
-    else:
         return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
 
 def readTick(request,orderNumber):
 
@@ -235,9 +235,9 @@ def modifyTick(request):
     send = [idTick, orderNumber, state, arrivalDate, arrivalTime, serviceId, userId]
 
     if UpdateTicket(send):
-        return JsonResponse(False, safe=False)
-    else:
         return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
 
 
 @csrf_exempt
@@ -248,9 +248,9 @@ def delTick(request):
     send=[idTick]
 
     if DeleteTicket(send):
-        return JsonResponse(False, safe=False)
-    else:
         return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
 
 
     
