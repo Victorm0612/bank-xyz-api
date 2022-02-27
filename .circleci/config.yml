@@ -56,3 +56,4 @@ workflows:
              branches:
                only: 
                  - develop # only run deploy-via-git job on some of this branches
+                 - master              
