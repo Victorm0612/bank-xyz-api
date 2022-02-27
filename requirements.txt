@@ -19,3 +19,4 @@ djoser
 PyJWT
 tk
 psycopg2-binary
+python-decouple
