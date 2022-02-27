@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('createUser/', createUsr),
     path('readUser/<str:docNumber>/', readUsr),
+    path('readUser/', readAllUsr),
     path('updateUser/', modifyUsr),
     path('deleteUser/<str:idToDelete>/', delUsr),
     path('createTeller/', createTeller),

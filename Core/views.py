@@ -37,6 +37,12 @@ def readUsr(request,docNumber):
 
     return JsonResponse(ret, safe=False)
 
+def readAllUsr(request):
+  searchResult = ReadAllUser()
+  ret = list(searchResult)
+
+  return JsonResponse(ret, safe=False)
+
 @csrf_exempt
 def modifyUsr(request):
 

@@ -29,7 +29,10 @@ def ReadUser(args):
     return search.values()
 
 
-    
+def ReadAllUser():
+    search = User.objects.all()
+    search.order_by('id')
+    return search.values()
 #
 #  Update a User in the table User
 #   args is an array of the arguments received

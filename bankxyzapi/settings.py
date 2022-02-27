@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'bankxyzapi.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'jcdzsguz',
-        'USER': 'jcdzsguz',
-        'PASSWORD': 'e8Y7fSZEDIwbyycBLCRZaM-ZwOCoWMRu',
-        'HOST': 'jelani.db.elephantsql.com',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': '061299victor',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
