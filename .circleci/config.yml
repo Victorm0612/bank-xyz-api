@@ -56,3 +56,11 @@ workflows:
              branches:
                only: 
                  - develop # only run deploy-via-git job on some of this branches
+                 - master
+           post-steps:
+              - run:
+                  name: Make migrations
+                  command: heroku run python3 manage.py makemigrations
+              - run:
+                  name: Migrate
+                  command: heroku run python3 manage.py migrate                  
