@@ -1,0 +1,1 @@
+web: gunicorn bankxyzapi.wsgi --log-file -
