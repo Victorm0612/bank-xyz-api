@@ -8,7 +8,7 @@ ALLOWED_HOSTS = ['*']
 ## Override base.py settings here
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('NAME_PROD'),
         'USER': config('USER_PROD'),
         'PASSWORD': config('PASSWORD_PROD'),
