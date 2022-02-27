@@ -19,3 +19,5 @@ djoser
 PyJWT
 tk
 psycopg2-binary
+dj-database-url
+whitenoise

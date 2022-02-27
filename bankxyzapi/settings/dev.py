@@ -1,4 +1,6 @@
+from email.policy import default
 from bankxyzapi.settings.base import *
+import dj_database_url
 from decouple import config
 
 DEBUG = config('DEBUG', cast=bool)
@@ -7,14 +9,9 @@ ALLOWED_HOSTS = []
 
 ## Override base.py settings here
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('NAME_DEV'),
-        'USER': config('USER_DEV'),
-        'PASSWORD': config('PASSWORD_DEV'),
-        'HOST': config('HOST_DEV'),
-        'PORT': config('PORT_DEV'),
-    }
+    'default': dj_database_url.config(
+      default=config('DATABASE_URL')
+    )
 }
 
 try:
