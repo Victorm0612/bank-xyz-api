@@ -257,6 +257,3 @@ def delTick(request):
         return JsonResponse(True, safe=False)
     else:
         return JsonResponse(False, safe=False)
-
-
-    
