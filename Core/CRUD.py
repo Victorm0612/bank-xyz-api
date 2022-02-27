@@ -1,7 +1,5 @@
 from ast import arg
 from datetime import datetime
-from operator import truediv
-from turtle import Turtle
 from Core.models import *
 
 #
