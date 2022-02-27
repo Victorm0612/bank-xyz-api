@@ -3,7 +3,7 @@ from decouple import config
 
 DEBUG = config('DEBUG_PROD', cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 ## Override base.py settings here
 DATABASES = {
