@@ -17,5 +17,5 @@ boto3
 django-rest-knox
 djoser
 PyJWT
-python3-tk
+tk
 psycopg2-binary
