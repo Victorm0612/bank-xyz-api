@@ -7,8 +7,8 @@ from django.db import models
 class User(models.Model):
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
-    docType = models.CharField(max_length=50,null=False)
-    docNumber = models.CharField(max_length=50,null=False)
+    docType = models.IntegerField(null=False)
+    docNumber = models.BigIntegerField(null=False)
     role = models.IntegerField()
     email = models.EmailField()
     password = models.CharField(max_length=50)

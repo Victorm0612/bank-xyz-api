@@ -15,7 +15,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from Core.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('createUser/', createUsr),
+    path('readUser/<str:docNumber>/', readUsr),
+    path('readUser/', readAllUsr),
+    path('updateUser/', modifyUsr),
+    path('deleteUser/<str:idToDelete>/', delUsr),
+    path('createTeller/', createTeller),
+    path('readTeller/<str:name>/', readTeller),
+    path('updateTeller/', modifyTeller),
+    path('deleteTeller/<str:idToDelete>/', delTeller),
+    path('createService/', createServ),
+    path('readService/<str:serviceName>/', readServ),
+    path('updateService/', modifyServ),
+    path('deleteService/<str:idToDelete>/', delServ),
+    path('createTicket/', createTick),
+    path('readTicket/<str:orderNumber>/', readTick),
+    path('updateTicket/', modifyTick),
+    path('deleteTicket/<str:idToDelete>/', delTick),
+
 ]
