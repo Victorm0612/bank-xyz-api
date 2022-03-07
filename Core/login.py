@@ -35,18 +35,3 @@ def login(mail,password):
             return "Password Invalid"
     else:
         return "User Not Found"
-
-def refreshToken(mail,passwrod):
-    user= User.objects.get(email=mail)
-    passwordProvided = make_password(passwrod,salt=None,hasher='default')
-    if passwordProvided==user.password:
-        encodedAccess = jwt.encode({"name":user.firsName,"email":mail,"role":user.role, "exp" : datetime.datetime.now() + datetime.timedelta(seconds=600)}, key,algorithms = ["HS256"])
-        encodedRefresh = jwt.encode({"email":mail,"passWord":passwordProvided, "exp" : datetime.datetime.now() + datetime.timedelta(seconds=1200)}, key,algorithms = ["HS256"])
-        tokens = [encodedAccess,encodedRefresh]
-        return tokens
-
-
-
-def returnKey():
-
-    return key

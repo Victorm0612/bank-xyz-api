@@ -2,7 +2,7 @@ import re
 from django.shortcuts import render
 from Core.CRUD import *
 from Core.models import *
-from Core.login import login,refreshToken
+from Core.login import login
 from django.http import JsonResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
@@ -270,3 +270,7 @@ def loginUser(request):
         return JsonResponse({"access":tokens[0],"refresh":tokens[1]})
     else:
         return JsonResponse(tokens,safe=False)
+
+
+
+
