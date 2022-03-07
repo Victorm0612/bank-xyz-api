@@ -1,6 +1,7 @@
 from ast import arg
 from datetime import datetime
 from Core.models import *
+from django.contrib.auth.hashers import make_password
 
 #
 # creates a new user in the table User
@@ -12,7 +13,7 @@ def CreateUser(args):
     if User.objects.filter(docNumber = args[3]).exists():
         return False
     else:
-        newUser = User(firstName = args[0],lastName = args[1],docType = args[2], docNumber = args[3], role = int(args[4]),email = args[5], password = args[6])
+        newUser = User(firstName = args[0],lastName = args[1],docType = args[2], docNumber = args[3], role = int(args[4]),email = args[5], password = make_password(args[6],salt=None,hasher='default'))
         newUser.save() 
         return True
 
@@ -59,7 +60,7 @@ def UpdateUser(args):
             userToMod.email = args[6]
         
         if args[7] != '':
-            userToMod.password = args[7]
+            userToMod.password = make_password(args[7],salt=None,hasher='default')
 
         userToMod.save()
         return True

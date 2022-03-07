@@ -11,7 +11,7 @@ class User(models.Model):
     docNumber = models.BigIntegerField(null=False)
     role = models.IntegerField()
     email = models.EmailField()
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=256)
 
 class BankTeller(models.Model):
     name = models.CharField(max_length=50)

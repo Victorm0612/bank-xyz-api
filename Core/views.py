@@ -2,6 +2,7 @@ import re
 from django.shortcuts import render
 from Core.CRUD import *
 from Core.models import *
+from Core.login import login,refreshToken
 from django.http import JsonResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
@@ -257,3 +258,15 @@ def delTick(request):
         return JsonResponse(True, safe=False)
     else:
         return JsonResponse(False, safe=False)
+
+@csrf_exempt
+def loginUser(request):
+
+    req = json.load(request)
+    user = req["email"]
+    password= req["password"]
+    tokens = login(user,password)
+    if isinstance(tokens,list):
+        return JsonResponse({"access":tokens[0],"refresh":tokens[1]})
+    else:
+        return JsonResponse(tokens,safe=False)
