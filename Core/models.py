@@ -1,4 +1,5 @@
 from pyexpat import model
+from unittest.util import _MAX_LENGTH
 from django.db import models
 
 # Create your models here.
@@ -11,7 +12,7 @@ class User(models.Model):
     docNumber = models.BigIntegerField(null=False)
     role = models.IntegerField()
     email = models.EmailField()
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=256)
 
 class BankTeller(models.Model):
     name = models.CharField(max_length=50)
