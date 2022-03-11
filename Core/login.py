@@ -6,24 +6,24 @@ import jwt
 
 def login(mail,password):
 
-    user = User.objects.filter(email=mail)
-    if user.exists():
-        uservalues = user.values().first()  
+    userinfo = User.objects.filter(email=mail)
+    if userinfo.exists():
+        uservalues = userinfo.values().first()  
         passwordCorrect = check_password(password,uservalues.get("password"))
         if passwordCorrect:
             ## "name":uservalues.get("firstname"),"email":mail,"role":uservalues.get("role"), "exp" : datetime.now() + timedelta(seconds=600)
             accesspayload = {
                 "usr": uservalues.get("id"),
                 "role": uservalues.get("role"),
-                "exp" : datetime.now() + timedelta(seconds=600)
+                "exp" : datetime.utcnow() + timedelta(seconds=3600)
                 }
             
             encodedAccess = jwt.encode(accesspayload,SECRET_KEY,algorithm="HS256")
             
             refreshPayload = {
                 "email": mail,
-                "role": password,
-                "exp" : datetime.now() + timedelta(seconds=1200)
+                "password": password,
+                "exp" : datetime.utcnow() + timedelta(seconds=3600)
                 }
             
             encodedRefresh = jwt.encode(refreshPayload,SECRET_KEY,algorithm="HS256")
