@@ -8,7 +8,7 @@ from bankxyzapi.settings.base import SECRET_KEY
 import json
 import jwt
 
-
+Line = ""
 
 # Create your views here.
 @csrf_exempt
