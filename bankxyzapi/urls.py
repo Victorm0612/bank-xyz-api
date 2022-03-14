@@ -31,6 +31,7 @@ urlpatterns = [
     path('updateTeller/', modifyTeller),
     path('deleteTeller/<str:idToDelete>/', delTeller),
     path('createService/', createServ),
+    path('readService/', readAllServ),
     path('readService/<str:serviceName>/', readServ),
     path('updateService/', modifyServ),
     path('deleteService/<str:idToDelete>/', delServ),

@@ -27,8 +27,8 @@ def login(mail,password):
                 }
             
             encodedRefresh = jwt.encode(refreshPayload,SECRET_KEY,algorithm="HS256")
-
-            tokens = [encodedAccess,encodedRefresh]
+            docNumber = uservalues.get("docNumber")
+            tokens = [encodedAccess,encodedRefresh, docNumber]
 
             return tokens
         else:

@@ -279,6 +279,25 @@ def createServ(request):
 
     
 
+def readAllServ(request):
+
+
+    authentication = authServ(request)
+    if authentication == "Successfull" :
+        searchResult = ReadAllService()
+        ret = list(searchResult)
+
+        return JsonResponse(ret,safe=False)        
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False)
+
+
 def readServ(request,serviceName):
 
 
@@ -486,7 +505,7 @@ def loginUser(request):
     password= req["password"]
     tokens = login(user,password)
     if isinstance(tokens,list):
-        return JsonResponse({"access":tokens[0],"refresh":tokens[1]})
+        return JsonResponse({"access":tokens[0],"refresh":tokens[1], "docNumber": tokens[2]})
     else:
         return JsonResponse(tokens,safe=False)
 
