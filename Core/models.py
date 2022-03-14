@@ -26,8 +26,8 @@ class Service(models.Model):
 
 class Ticket(models.Model):
     orderNumber = models.IntegerField()
-    userId = models.ForeignKey(User,on_delete=models.CASCADE)
-    serviceId = models.ForeignKey(Service,on_delete=models.CASCADE)
+    userId = models.ForeignKey(User,on_delete=models.CASCADE, null= True)
+    serviceId = models.ForeignKey(Service,on_delete=models.CASCADE, null= True)
     state = models.IntegerField()
     arrivalDate = models.DateField(auto_now_add=True)
     arrivalTime = models.TimeField(auto_now_add=True)

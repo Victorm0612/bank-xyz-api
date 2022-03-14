@@ -39,6 +39,9 @@ urlpatterns = [
     path('updateTicket/', modifyTick),
     path('deleteTicket/<str:idToDelete>/', delTick),
     path('login/', loginUser),
-    path('refresh/',refreshUser)
+    path('refresh/',refreshUser),
+    path('createUserAdmin/',createUserAdmin),
+    path('getLine/', getLine),
+    path('getNextTurn/',getNextTurn),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

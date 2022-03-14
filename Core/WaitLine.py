@@ -1,126 +1,167 @@
 from asyncio.windows_events import NULL
 from datetime import datetime
-from Core.models import Service
+from math import floor
+from re import search
+from typing import List
+from Core.models import Service,Ticket
 
 class WaitLine():
 
-    line = []
-    timeWaiting = []
-    typeOrder = []
+    line = list()
+    timeWaiting = list()
+    typeOrder = list()
 
-    def __init__(self, clientId, timeArrival, serviceId):
-        self.line.append(clientId)
-        self.timeWaiting.append(self.calcWait(timeArrival))
-        self.typeOrder.append(getType(serviceId))
+    def __init__(self, ticketId):
+        self.line.append(ticketId)
+        self.timeWaiting.append(self.__calcWait(ticketId))
+        self.typeOrder.append(self.__getType(ticketId))
 
-    def addClientToLine(self,clientId, timeArrival, serviceId):
-        self.line.append(clientId)
-        self.timeWaiting.append(self.calcWait(timeArrival))
-        self.typeOrder.append(getType(serviceId))
+    def addClientToLine(self,ticketId):
+        self.__updateTimeWaiting()
+        self.line.append(ticketId)
+        self.typeOrder.append(self.__getType(ticketId))
+        self.timeWaiting.append(self.__calcWait(ticketId))
 
-        self.sortBytimeWaiting()
-        self.sortByTypeOrder()
+        self.__sortByTimeWaiting()
+        self.__sortByTipeOrder()
 
     def getNextTurn(self,typeTeller):
 
-        nextTurn = NULL
-        for i in range(len(self.typeOrder)):
-            if self.typeOrder[i] == typeTeller:
-              nextTurn = self.line[i]
-              self.eraseTurnFromLine(nextTurn)
+        nextTurn = None
+        if len(self.line) == 0:
+            None
+        else:
+            for i in range(len(self.typeOrder)):
+                if self.typeOrder[i] == typeTeller:
+                    nextTurn = self.line[i]
+                    self.__eraseTurnFromLine(nextTurn)
 
-        if nextTurn == NULL:
-            nextTurn = self.line[0]
-            self.eraseTurnFromLine(nextTurn)
+            if nextTurn == None:
+                nextTurn = self.line[0]
+                self.__eraseTurnFromLine(nextTurn)
         
-        return nextTurn
+        return Ticket.objects.filter(id=nextTurn).values().first()
 
-    def eraseTurnFromLine(self, turn):
+    def returnLine(self):
+        returnArray = list()
+        searchticket = ''
+        if len(self.line) > 0:
+            for i in self.line:
+                searchticket = Ticket.objects.filter(id=i).values().first()
+                returnArray.append(i)
+            return returnArray
+        else: 
+            return None
+
+    def loadLine(self):
+        toload = Ticket.objects.filter(state = 0).values()
+        for i in toload:
+            self.addClientToLine(i["id"])
+
+    def __eraseTurnFromLine(self, turn):
         for i in range(len(self.line)):
             if self.line[i] == turn:
                 self.line.pop(i)
                 self.timeWaiting.pop(i)
                 self.typeOrder.pop(i)
 
-    
-    def sortBytimeWaiting(self):
+    def __sortByTimeWaiting(self):
+        size = len(self.timeWaiting)
+        maxvalue = max(self.timeWaiting)
+        timeOrder = [0] * size
+        lineOrder = [0] * size
+        typeOrder = [0] * size
 
-        # The output character array that will have sorted arr
-        outputTime = [0 for i in range(len(self.timeWaiting))]
-        outputId = self.line
+        # Initialize count array
+        count = [0] * maxvalue
+
+        # Store the count of each elements in count array
+        for i in range(0, size):
+            count[self.timeWaiting[i]] += 1
+
+        # Store the cummulative count
+        for i in range(1, 10):
+            count[i] += count[i - 1]
+
+        # Find the index of each element of the original array in count array
+        # place the elements in output array
+        i = size - 1
+        while i >= 0:
+            timeOrder[count[self.timeWaiting[i]] - 1] = self.timeWaiting[i]
+            lineOrder[count[self.timeWaiting[i]] - 1] = self.line[i]
+            typeOrder[count[self.timeWaiting[i]] - 1] = self.typeOrder[i]
+            count[self.timeWaiting[i]] -= 1
+            i -= 1
+
+        # Copy the sorted elements into original array
+        for i in range(0, size):
+            self.timeWaiting[i] = timeOrder[i]
+            self.typeOrder[i] = typeOrder[i]
+            self.line[i] = lineOrder[i]
+
+
+    def __sortByTipeOrder(self):
+        size = len(self.timeWaiting)
+        maxvalue = max(self.typeOrder)
+        timeOrder = [0] * size
+        lineOrder = [0] * size
+        typeOrder = [0] * size
+
+        # Initialize count array
+        count = [0] * maxvalue
+
+        # Store the count of each elements in count array
+        for i in range(0, size):
+            count[self.typeOrder[i]] += 1
+
+        # Store the cummulative count
+        for i in range(1, count):
+            count[i] += count[i - 1]
+
+        # Find the index of each element of the original array in count array
+        # place the elements in output array
+        i = size - 1
+        while i >= 0:
+            timeOrder[count[self.timeWaiting[i]] - 1] = self.timeWaiting[i]
+            lineOrder[count[self.timeWaiting[i]] - 1] = self.line[i]
+            typeOrder[count[self.timeWaiting[i]] - 1] = self.typeOrder[i]
+            count[self.timeWaiting[i]] -= 1
+            i -= 1
+
+        # Copy the sorted elements into original array
+        for i in range(0, size):
+            self.timeWaiting[i] = timeOrder[i]
+            self.typeOrder[i] = typeOrder[i]
+            self.line[i] = lineOrder[i]
         
-        # Create a count array to store count of individual
-        # characters and initialize count array as 0
-        count = [0 for i in range(256)]
-    
-        # Store count of each character
-        for i in self.timeWaiting:
-            count[ord(i)] += 1
-    
-        # Change count[i] so that count[i] now contains actual
-        # position of this character in output array
-        for i in range(256):
-            count[i] += count[i-1]
-    
-        # Build the output character array
-        for i in range(len(self.timeWaiting)):
-            outputTime[count[ord(self.timeWaiting[i])]-1] = self.timeWaiting[i]
-            outputId[count[ord(self.timeWaiting[i])]-1] = self.line[i]
-            count[ord(self.timeWaiting[i])] -= 1
-    
-        # Copy the output array to arr, so that arr now
-        # contains sorted characters
-        for i in range(len(self.timeWaiting)):
-            self.timeWaiting[i] = outputTime[i]
-            self.line[i] = outputId[i]
-
-    def sortByTypeOrder(self):
-
-        # The output character array that will have sorted arr
-        outputType = [0 for i in range(len(self.typeOrder))]
-        outputId = self.line
-        
-        # Create a count array to store count of individual
-        # characters and initialize count array as 0
-        count = [0 for i in range(256)]
-    
-        # Store count of each character
-        for i in self.typeOrder:
-            count[ord(i)] += 1
-    
-        # Change count[i] so that count[i] now contains actual
-        # position of this character in output array
-        for i in range(256):
-            count[i] += count[i-1]
-    
-        # Build the output character array
-        for i in range(len(self.typeOrder)):
-            outputType[count[ord(self.typeOrder[i])]-1] = self.typeOrder[i]
-            outputId[count[ord(self.typeOrder[i])]-1] = self.line[i]
-            count[ord(self.typeOrder[i])] -= 1
-    
-        # Copy the output array to arr, so that arr now
-        # contains sorted characters
-        for i in range(len(self.typeOrder)):
-            self.typeOrder[i] = outputType[i]
-            self.line[i] = outputId[i]
-        
 
     
-    def calcWait(self, timeArrival):
-        timeInWaiting = self.actualTime() - self.timeToInt(timeArrival)
+    def __calcWait(self, ticketId):
+        selectedTicket = Ticket.objects.filter(id=ticketId).values().first()
+        timeInWaiting = self.__actualTime() - self.__timeToInt(selectedTicket["arrivalDate"],selectedTicket["arrivalTime"])
         return timeInWaiting
     
-    def actualTime():
+    def __actualTime(self):
         time = datetime.now()
         intTime = time.year * 100000 + time.month * 10000 + time.day * 1000 + time.hour * 100 + time.minute * 10 + time.second
         return intTime
 
-    def timeToInt(self, time):
-        yyyy, mn, dy, hh, mm , ss = map(int, time.split(':'))
-        intTime = yyyy * 100000 + mn * 10000 + dy * 1000 + hh * 100 + mm * 10 + ss
+    def __timeToInt(self, date, time):
+        yyyy, mn, dy = date.year, date.month, date.day
+        hh, mm , ss = time.hour, time.minute, time.second
+        intTime = yyyy * 100000 + mn * 10000 + dy * 1000 + hh * 100 + mm * 10 + floor(ss)
         return intTime
     
-    def getType(self, serviceId):
-        ServiceToSearch = Service.objects.filter(service_id=serviceId).values().first()
+    def __getType(self, lineid):
+        ticketService = Ticket.objects.filter(id=lineid).values().first()
+        ServiceToSearch = Service.objects.filter(service_id=ticketService["serviceId_id"]).values().first()
         return ServiceToSearch["serviceType"]
+
+    def __updateTimeWaiting(self):
+
+        for i in self.timeWaiting:
+            for j in self.line:
+                i = self.__calcWait(j)
+    
+    
+    
