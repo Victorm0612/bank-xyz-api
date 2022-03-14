@@ -23,7 +23,7 @@ def CreateUser(args):
 #
 
 def ReadUser(args):
-    search = User.objects.filter(docNumber__icontains=args[0])
+    search = User.objects.filter(docNumber__icontains = args[0])
     search.order_by('id')
     return search.values()
 
@@ -158,6 +158,13 @@ def CreateService(args):
 # search for one or more Services in the table Service
 #   args is an array of the arguments received to do the search
 #
+def ReadAllService():
+
+    # args order serviceType, teller_id_id
+    search = Service.objects.all()
+    search.order_by('service_id')
+    return search.values()
+
 def ReadService(args):
 
     # args order serviceType, teller_id_id
