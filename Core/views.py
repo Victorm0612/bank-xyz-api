@@ -1,4 +1,6 @@
+from array import array
 from genericpath import exists
+from multiprocessing.connection import wait
 from Core.CRUD import *
 from Core.models import *
 from Core.login import login
@@ -9,8 +11,6 @@ from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from bankxyzapi.settings.base import SECRET_KEY
 import json
 import jwt
-
-line = None
 
 # Create your views here.
 @csrf_exempt
@@ -386,31 +386,29 @@ def delServ(request, idToDelete):
 
 @csrf_exempt
 def createTick(request):
-
     authentication = authTick(request)
     if authentication == "Successfull" :
-        global line
         #### orderNumber, state, serviceId_id, userId_id
         req = json.load(request)
 
 
-        orderNumber = req["orderNumber"]
-        state = req["state"]
-        serviceId = req["serviceId_id"]
-        userId = req["userId_id"]
         
+        state = "0"
+        servicetype = req["serviceType"]
+        docNumber = req["docNumber"]
+
+        orderNumber = getOrderNumberByServicetype(int(servicetype))
+        userId= getNumberId(int(docNumber))
+        serviceId= getTellerByServiceType(servicetype)
         send = [orderNumber, state, serviceId ,userId]
 
-
-        if CreateTicket(send):
-            if line is None:
-                line = WaitLine(getTicketId(orderNumber))
-                line.loadLine()
-            else:
-                line.addClientToLine(getTicketId(orderNumber))
-            return JsonResponse("Ticket Created", safe=False)
+        
+        aux = CreateTicket(send)
+        if aux[0]:
+            return JsonResponse(aux[1], safe=False)
         else:
-            return JsonResponse("Ticket Couldn't Be Created", safe=False, status = 404)        
+            ##  "Ticket Couldn't Be Created"
+            return JsonResponse("Ticket could not be created", safe=False, status = 404)        
     elif authentication == "Token expired":
         return JsonResponse(authentication, safe=False, status = 404)
     elif authentication == "No Authorization Token Given":
@@ -466,7 +464,6 @@ def modifyTick(request):
         send = [idTick, orderNumber, state, arrivalDate, arrivalTime, serviceId, userId]
 
         if UpdateTicket(send):
-            line.addClientToLine(idTick)
             return JsonResponse("Ticket Updated", safe=False)
         else:
             return JsonResponse("Ticket Couldn't Be Updated", safe=False, status = 404)
@@ -506,18 +503,21 @@ def delTick(request,idToDelete):
 
 @csrf_exempt
 def getLine(request):
-    global line
     authentication = authTick(request)
     if authentication == "Successfull" :
-        if line is None:
+
+        line = WaitLine()
+
+        actualLine = line.returnLine()
+
+
+
+        del line
+
+        if actualLine is None:
             return JsonResponse("There is No Line At The Moment", safe=False, status = 404)
         else:
-            actualLine = line.returnLine()
-
-            if actualLine is None:
-                return JsonResponse("There is No Line At The Moment", safe=False, status = 404)
-            else:
-                return JsonResponse(actualLine, safe=False)
+            return JsonResponse(actualLine, safe=False)
     elif authentication == "Token expired":
         return JsonResponse(authentication, safe=False, status = 404)
     elif authentication == "No Authorization Token Given":
@@ -528,19 +528,43 @@ def getLine(request):
         return JsonResponse("Token Not Valid", safe=False, status = 404)
 
 @csrf_exempt
-def getNextTurn(request):
-    global line
+def getLineArrays(request):
     authentication = authTick(request)
     if authentication == "Successfull" :
-        if line is None:
+        line = WaitLine()
+        arrays = line.getarrays()
+
+        if arrays is None:
+            del line
             return JsonResponse("There is No Line At The Moment", safe=False, status = 404)
         else:
-            actualLine = line.getNextTurn()
+            del line
+            return JsonResponse({'line':arrays[0],'typeorder':arrays[1],'timewaiting':arrays[2]}, safe=False)
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
 
-            if actualLine is None:
-                return JsonResponse("There is No Line At The Moment", safe=False, status = 404)
-            else:
-                return JsonResponse(actualLine, safe=False)
+@csrf_exempt
+def getNextTurn(request,servicetype):
+
+    authentication = authTick(request)
+    if authentication == "Successfull" :
+        
+        line = WaitLine()
+
+        turn = line.getNextTurn(int(servicetype))
+
+        if turn is None:
+            del line
+            return JsonResponse("Line Is Empty At The Moment", safe=False, status = 404)
+        else:
+            del line
+            return JsonResponse(turn, safe=False)
     elif authentication == "Token expired":
         return JsonResponse(authentication, safe=False, status = 404)
     elif authentication == "No Authorization Token Given":

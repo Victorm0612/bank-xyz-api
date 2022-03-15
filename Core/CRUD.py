@@ -1,5 +1,6 @@
-from ast import arg
+from ast import If, arg
 from datetime import datetime
+from re import search
 from Core.models import *
 from django.contrib.auth.hashers import make_password
 
@@ -219,19 +220,74 @@ def DeleteService(args):
 def CreateTicket(args):
     time = datetime.now()
     # args order : orderNumber, state, serviceId_id, userId_id
-    if Ticket.objects.filter(orderNumber=int(args[0])).exists():
-        return False
+    if Ticket.objects.filter(orderNumber=args[0]).exists():
+        return [False,args[0]]
     else: 
         service = Service.objects.get(service_id=args[2])
         user = User.objects.get(id=args[3])
         newTicket = Ticket(
-                        orderNumber=int(args[0]),
+                        orderNumber=args[0],
                         state=int(args[1]),
                         serviceId=service,
                         userId=user
                         )
         newTicket.save()
-        return True
+        search = Ticket.objects.filter(orderNumber=args[0]).values().first()
+        return [True,search]
+
+def getNumberId(numberId):
+    userSearch=User.objects.filter(docNumber=numberId).values().first()
+    return userSearch["id"]
+
+def getTellerByServiceType(type):
+    serviceSearch=Service.objects.filter(serviceType=type).values().first()
+    return serviceSearch["service_id"]
+
+def getOrderNumberByServicetype(type):
+    search = None
+    if type == 0:
+
+        if Ticket.objects.filter(orderNumber__icontains="G").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="G").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("G")
+            number = int(split[1]) + 1
+            return "G" + str(number)
+        else: return "G1"
+
+    elif type == 1:
+        if Ticket.objects.filter(orderNumber__icontains="I").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="I").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("I")
+            number = int(split[1]) + 1
+            return "I" + str(number)
+        else: return "I1"
+    elif type == 2:
+        if Ticket.objects.filter(orderNumber__icontains="S").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="S").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("S")
+            number = int(split[1]) + 1
+            return "S" + str(number)
+        else: return "S1"
+            
+    elif type == 3:
+        if Ticket.objects.filter(orderNumber__icontains="D").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="D").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("D")
+            number = int(split[1]) + 1
+            return "D" + str(number)
+        else: return "D1"
+    else:
+        if Ticket.objects.filter(orderNumber__icontains="V").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="V").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("V")
+            number = int(split[1]) + 1
+            return "V" + str(number)
+        else: return "V1"
 
 
 #

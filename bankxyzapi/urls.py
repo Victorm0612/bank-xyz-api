@@ -43,6 +43,7 @@ urlpatterns = [
     path('refresh/',refreshUser),
     path('createUserAdmin/',createUserAdmin),
     path('getLine/', getLine),
-    path('getNextTurn/',getNextTurn),
+    path('getNextTurn/<str:servicetype>/',getNextTurn),
+    path('getLineArrays/',getLineArrays)
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
