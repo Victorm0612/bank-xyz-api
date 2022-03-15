@@ -1,9 +1,6 @@
-from asyncio.windows_events import NULL
 from datetime import datetime
 from math import floor
 from operator import indexOf
-from re import search
-from typing import List
 from Core.models import Service,Ticket
 
 class WaitLine():
