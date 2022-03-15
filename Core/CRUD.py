@@ -1,5 +1,6 @@
-from ast import arg
+from ast import If, arg
 from datetime import datetime
+from re import search
 from Core.models import *
 from django.contrib.auth.hashers import make_password
 
@@ -98,7 +99,7 @@ def CreateBankTeller(args):
     else: 
         newTeller = BankTeller(name=args[0])
         newTeller.save()
-        return False
+        return True
 
 #
 # search for one or more bank tellers in the table BankTeller
@@ -134,7 +135,7 @@ def UpdateBankTeller(args):
 def DeleteBankTeller(args):
     # args order id
     if BankTeller.objects.filter(id = args[0]).exists() :
-        tellerToDelete = User.objects.get(id=args[0])
+        tellerToDelete = BankTeller.objects.get(id=args[0])
         tellerToDelete.delete()
         return True
     else : 
@@ -168,8 +169,8 @@ def ReadAllService():
 def ReadService(args):
 
     # args order serviceType, teller_id_id
-    search = Service.objects.filter(serviceName__icontains = int(args[0]))
-    search.order_by('id')
+    search = Service.objects.filter(serviceName__icontains = args[0])
+    search.order_by('service_id')
     return search.values()
     
 #
@@ -178,8 +179,8 @@ def ReadService(args):
 #
 def UpdateService(args):
 
-    if Service.objects.filter(id = args[0]).exists():
-        ServiceToMod= Service.objects.get(id = args[0])
+    if Service.objects.filter(service_id = args[0]).exists():
+        ServiceToMod= Service.objects.get(service_id = args[0])
 
         if args[1] != '':
             ServiceToMod.serviceName = args[1]
@@ -205,7 +206,7 @@ def UpdateService(args):
 def DeleteService(args):
 
     if Service.objects.filter(id = args[0]).exists() :
-        serviceToDelete = User.objects.get(id=args[0])
+        serviceToDelete = Service.objects.get(id=args[0])
         serviceToDelete.delete()
         return True
     else : 
@@ -218,13 +219,75 @@ def DeleteService(args):
 #
 def CreateTicket(args):
     time = datetime.now()
-    # args order : orderNumber, state, arrivalDate, arrivalTime, serviceId_id, userId_id
-    if Ticket.objects.filter(name = args[0]).exists():
-        return False
+    # args order : orderNumber, state, serviceId_id, userId_id
+    if Ticket.objects.filter(orderNumber=args[0]).exists():
+        return [False,args[0]]
     else: 
-        newTicket = Ticket(orderNumber=int(args[0]),state=int(args[1]),arrivalDate=time.date(),arrivalTime=time.time(),serviceId_id=int(args[2]),userId_id=int(args[3]))
+        service = Service.objects.get(service_id=args[2])
+        user = User.objects.get(id=args[3])
+        newTicket = Ticket(
+                        orderNumber=args[0],
+                        state=int(args[1]),
+                        serviceId=service,
+                        userId=user
+                        )
         newTicket.save()
-        return True
+        search = Ticket.objects.filter(orderNumber=args[0]).values().first()
+        return [True,search]
+
+def getNumberId(numberId):
+    userSearch=User.objects.filter(docNumber=numberId).values().first()
+    return userSearch["id"]
+
+def getTellerByServiceType(type):
+    serviceSearch=Service.objects.filter(serviceType=type).values().first()
+    return serviceSearch["service_id"]
+
+def getOrderNumberByServicetype(type):
+    search = None
+    if type == 0:
+
+        if Ticket.objects.filter(orderNumber__icontains="G").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="G").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("G")
+            number = int(split[1]) + 1
+            return "G" + str(number)
+        else: return "G1"
+
+    elif type == 1:
+        if Ticket.objects.filter(orderNumber__icontains="I").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="I").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("I")
+            number = int(split[1]) + 1
+            return "I" + str(number)
+        else: return "I1"
+    elif type == 2:
+        if Ticket.objects.filter(orderNumber__icontains="S").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="S").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("S")
+            number = int(split[1]) + 1
+            return "S" + str(number)
+        else: return "S1"
+            
+    elif type == 3:
+        if Ticket.objects.filter(orderNumber__icontains="D").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="D").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("D")
+            number = int(split[1]) + 1
+            return "D" + str(number)
+        else: return "D1"
+    else:
+        if Ticket.objects.filter(orderNumber__icontains="V").exists():
+            search = Ticket.objects.filter(orderNumber__icontains="V").values()
+            search.order_by('id')
+            split = search.last()["orderNumber"].split("V")
+            number = int(split[1]) + 1
+            return "V" + str(number)
+        else: return "V1"
 
 
 #
@@ -236,6 +299,15 @@ def ReadTicket(args):
     search = Ticket.objects.filter(orderNumber__icontains = int(args[0]))
     search.order_by('id')
     return search.values()
+
+
+#
+# search and returns the Id of one Ticket
+#   ordernumber is the number of order we want to search
+#
+def getTicketId(numbertosearch):
+    search = Ticket.objects.filter(orderNumber = int(numbertosearch)).values().first()
+    return search["id"]
 #
 #  Update a Ticket in the table Ticket
 #   args is an array of the arguments received
@@ -258,11 +330,11 @@ def UpdateTicket(args):
         if args[4] != '':
             ticketToMod.arrivalTime = args[4]
         
-        if args[4] != '':
-            ticketToMod.serviceId_id = int(args[5])
+        if args[5] != '':
+            ticketToMod.serviceId = int(args[5])
         
-        if args[4] != '':
-            ticketToMod.userId_id = int(args[6])
+        if args[6] != '':
+            ticketToMod.userId = int(args[6])
 
         ticketToMod.save()
         return True
@@ -275,7 +347,7 @@ def UpdateTicket(args):
 #
 def DeleteTicket(args):
     if Ticket.objects.filter(id = args[0]).exists() :
-        ticketToDelete = User.objects.get(id=args[0])
+        ticketToDelete = Ticket.objects.get(id=args[0])
         ticketToDelete.delete()
         return True
     else : 
