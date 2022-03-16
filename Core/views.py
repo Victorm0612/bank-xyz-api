@@ -6,6 +6,7 @@ from Core.models import *
 from Core.login import login
 from Core.authentication import authLocation, authUsr, authTeller, authServ, authTick, authRefresh
 from Core.WaitLine import WaitLine
+from Core.stats import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from bankxyzapi.settings.base import SECRET_KEY
@@ -693,7 +694,7 @@ def getLocationUseData(request,locationId):
     authentication = authTick(request)
     if authentication == "Successfull" :
         
-        None
+        return JsonResponse(useByCashier(locationId),safe=False)
 
 
     elif authentication == "Token expired":
@@ -704,6 +705,61 @@ def getLocationUseData(request,locationId):
         return JsonResponse(authentication, safe=False, status = 404)
     else : 
         return JsonResponse("Token Not Valid", safe=False, status = 404)
+
+@csrf_exempt
+def getAvgTimeByLocation(request,locationId):
+
+    authentication = authTick(request)
+    if authentication == "Successfull" :
+        
+        return JsonResponse(avgTimeByLocation(locationId),safe=False)
+
+
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
+
+@csrf_exempt
+def getClientsByDay(request,locationId,date):
+
+    authentication = authTick(request)
+    if authentication == "Successfull" :
+        
+        return JsonResponse(clientsByDay(locationId,date),safe=False)
+
+
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
+
+@csrf_exempt
+def getClientsByMonth(request,locationId,month):
+
+    authentication = authTick(request)
+    if authentication == "Successfull" :
+        
+        return JsonResponse(clientsByMonth(locationId,month),safe=False)
+
+
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
+
 
 
 @csrf_exempt

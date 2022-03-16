@@ -291,11 +291,81 @@ def CreateTicket(args):
                         state=int(args[1]),
                         serviceId=service,
                         userId=user,
-                        locationId=location
+                        LocationId=location
                         )
         newTicket.save()
         search = Ticket.objects.filter(orderNumber=args[0]).values().first()
         return [True,search]
+
+
+#
+# search for one or more Tickets in the table Ticket
+#   args is an array of the arguments received to do the search
+#
+def ReadTicket(args):
+
+    search = Ticket.objects.filter(orderNumber__icontains = int(args[0]))
+    search.order_by('id')
+    return search.values()
+
+
+#
+# search and returns the Id of one Ticket
+#   ordernumber is the number of order we want to search
+#
+def getTicketId(numbertosearch):
+    search = Ticket.objects.filter(orderNumber = int(numbertosearch)).values().first()
+    return search["id"]
+#
+#  Update a Ticket in the table Ticket
+#   args is an array of the arguments received
+#
+def UpdateTicket(args):
+    print(Ticket.objects.filter(id = args[0]).exists())
+    if Ticket.objects.filter(id = args[0]).exists():
+
+        ticketToMod= Ticket.objects.get(id = args[0])
+
+        if args[1] != '':
+            ticketToMod.orderNumber = args[1]
+        
+        if args[2] != '':
+            ticketToMod.state = int(args[2])
+        
+        if args[3] != '':
+            ticketToMod.arrivalDate = args[3]
+        
+        if args[4] != '':
+            ticketToMod.arrivalTime = args[4]
+        
+        if args[5] != '':
+            ticketToMod.serviceId = Service.objects.get(service_id = int(args[5]))
+        
+        if args[6] != '':
+            ticketToMod.userId = User.objects.get(id = int(args[6]))
+
+        if args[7] != '':
+            ticketToMod.LocationId = Location.objects.get(id = int(args[7]))
+
+        ticketToMod.save()
+        return True
+    else:
+        return False
+    
+#
+# Delete a Ticket in the table Ticket
+#   args is an array of the arguments received
+#
+def DeleteTicket(args):
+    if Ticket.objects.filter(id = args[0]).exists() :
+        ticketToDelete = Ticket.objects.get(id=args[0])
+        ticketToDelete.delete()
+        return True
+    else : 
+        return False
+
+
+
 
 def getNumberId(numberId):
     userSearch=User.objects.filter(docNumber=numberId).values().first()
@@ -350,70 +420,3 @@ def getOrderNumberByServicetype(type):
             number = int(split[1]) + 1
             return "V" + str(number)
         else: return "V1"
-
-
-#
-# search for one or more Tickets in the table Ticket
-#   args is an array of the arguments received to do the search
-#
-def ReadTicket(args):
-
-    search = Ticket.objects.filter(orderNumber__icontains = int(args[0]))
-    search.order_by('id')
-    return search.values()
-
-
-#
-# search and returns the Id of one Ticket
-#   ordernumber is the number of order we want to search
-#
-def getTicketId(numbertosearch):
-    search = Ticket.objects.filter(orderNumber = int(numbertosearch)).values().first()
-    return search["id"]
-#
-#  Update a Ticket in the table Ticket
-#   args is an array of the arguments received
-#
-def UpdateTicket(args):
-    print(Ticket.objects.filter(id = args[0]).exists())
-    if Ticket.objects.filter(id = args[0]).exists():
-
-        ticketToMod= Ticket.objects.get(id = args[0])
-
-        if args[1] != '':
-            ticketToMod.orderNumber = args[1]
-        
-        if args[2] != '':
-            ticketToMod.state = int(args[2])
-        
-        if args[3] != '':
-            ticketToMod.arrivalDate = args[3]
-        
-        if args[4] != '':
-            ticketToMod.arrivalTime = args[4]
-        
-        if args[5] != '':
-            ticketToMod.serviceId = Service.objects.get(service_id = int(args[5]))
-        
-        if args[6] != '':
-            ticketToMod.userId = User.objects.get(id = int(args[6]))
-
-        if args[7] != '':
-            ticketToMod.locationId = Location.objects.get(id = int(args[7]))
-
-        ticketToMod.save()
-        return True
-    else:
-        return False
-    
-#
-# Delete a Ticket in the table Ticket
-#   args is an array of the arguments received
-#
-def DeleteTicket(args):
-    if Ticket.objects.filter(id = args[0]).exists() :
-        ticketToDelete = Ticket.objects.get(id=args[0])
-        ticketToDelete.delete()
-        return True
-    else : 
-        return False
