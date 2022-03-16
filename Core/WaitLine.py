@@ -9,8 +9,8 @@ class WaitLine():
     timeWaiting = list()
     typeOrder = list()
 
-    def __init__(self):
-        self.loadLine()
+    def __init__(self,locationId):
+        self.loadLine(locationId)
 
     def addAndOrderClientToLine(self,ticketId):
         self.line.append(ticketId)
@@ -30,10 +30,10 @@ class WaitLine():
 
     def getNextTurn(self,Teller):
 
-        nextTurn = None
+        nextTurn = None            
         typeTeller = Service.objects.filter(service_id=Teller).values().first()
         if len(self.line) == 0:
-            None
+            return None
         else:
 
             for i in self.line:
@@ -71,8 +71,11 @@ class WaitLine():
         else: 
             return None
 
-    def loadLine(self):
-        toload = Ticket.objects.filter(state = 0).values()
+    def loadLine(self,location):
+        self.line = list()
+        self.timeWaiting = list()
+        self.typeOrder = list()
+        toload = Ticket.objects.filter(state = 0,LocationId=location).values()
         for i in toload:
             if i["id"] in self.line:
                 pass
@@ -98,6 +101,8 @@ class WaitLine():
 
     def __sortByTimeWaiting(self):
         size = len(self.timeWaiting)
+        if size == 0:
+            return list()
         maxvalue = max(self.timeWaiting) + 1
         timeOrder = [0] * size
         lineOrder = [0] * size
@@ -135,6 +140,8 @@ class WaitLine():
 
     def __sortByTipeOrder(self):
         size = len(self.typeOrder)
+        if size == 0:
+            return list()
         maxvalue = max(self.typeOrder) + 1
         timeOrder = [0] * size
         lineOrder = [0] * size
@@ -160,6 +167,11 @@ class WaitLine():
             typeOrder[count[self.typeOrder[i]] - 1] = self.typeOrder[i]
             count[self.typeOrder[i]] -= 1
             i -= 1
+
+        
+        timeOrder = timeOrder[::-1]
+        lineOrder = lineOrder[::-1]
+        typeOrder = typeOrder[::-1]
 
         # Copy the sorted elements into original array
         for i in range(0, size):
