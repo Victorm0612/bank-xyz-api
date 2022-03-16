@@ -192,7 +192,7 @@ def UpdateService(args):
             ServiceToMod.serviceType = args[3]
         
         if args[4] != '':
-            ServiceToMod.teller_id_id = args[4]
+            ServiceToMod.teller_id_id = BankTeller.objects.get(id = int(args[4]))
         ServiceToMod.save()
         return True
     else:
@@ -313,13 +313,13 @@ def getTicketId(numbertosearch):
 #   args is an array of the arguments received
 #
 def UpdateTicket(args):
-
+    print(Ticket.objects.filter(id = args[0]).exists())
     if Ticket.objects.filter(id = args[0]).exists():
 
         ticketToMod= Ticket.objects.get(id = args[0])
 
         if args[1] != '':
-            ticketToMod.orderNumber = int(args[1])
+            ticketToMod.orderNumber = args[1]
         
         if args[2] != '':
             ticketToMod.state = int(args[2])
@@ -331,10 +331,10 @@ def UpdateTicket(args):
             ticketToMod.arrivalTime = args[4]
         
         if args[5] != '':
-            ticketToMod.serviceId = int(args[5])
+            ticketToMod.serviceId = Service.objects.get(service_id = int(args[5]))
         
         if args[6] != '':
-            ticketToMod.userId = int(args[6])
+            ticketToMod.userId = User.objects.get(id = int(args[6]))
 
         ticketToMod.save()
         return True
