@@ -615,11 +615,11 @@ def delTick(request,idToDelete):
         return JsonResponse("Token Not Valid", safe=False, status = 404)
 
 @csrf_exempt
-def getLine(request):
+def getLine(request,locationId):
     authentication = authTick(request)
     if authentication == "Successfull" :
 
-        line = WaitLine()
+        line = WaitLine(locationId)
 
         actualLine = line.returnLine()
 
@@ -641,10 +641,10 @@ def getLine(request):
         return JsonResponse("Token Not Valid", safe=False, status = 404)
 
 @csrf_exempt
-def getLineArrays(request):
+def getLineArrays(request,locationId):
     authentication = authTick(request)
     if authentication == "Successfull" :
-        line = WaitLine()
+        line = WaitLine(locationId)
         arrays = line.getarrays()
 
         if arrays is None:
@@ -663,12 +663,12 @@ def getLineArrays(request):
         return JsonResponse("Token Not Valid", safe=False, status = 404)
 
 @csrf_exempt
-def getNextTurn(request,servicetype):
+def getNextTurn(request,servicetype,locationId):
 
     authentication = authTick(request)
     if authentication == "Successfull" :
         
-        line = WaitLine()
+        line = WaitLine(locationId)
 
         turn = line.getNextTurn(int(servicetype))
 
@@ -687,7 +687,24 @@ def getNextTurn(request,servicetype):
     else : 
         return JsonResponse("Token Not Valid", safe=False, status = 404)
 
-    
+@csrf_exempt
+def getLocationUseData(request,locationId):
+
+    authentication = authTick(request)
+    if authentication == "Successfull" :
+        
+        None
+
+
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
+
 
 @csrf_exempt
 def loginUser(request):

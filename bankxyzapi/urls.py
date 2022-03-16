@@ -47,8 +47,8 @@ urlpatterns = [
     path('login/', loginUser),
     path('refresh/',refreshUser),
     path('createUserAdmin/',createUserAdmin),
-    path('getLine/', getLine),
-    path('getNextTurn/<str:servicetype>/',getNextTurn),
-    path('getLineArrays/',getLineArrays)
+    path('getLine/<str:locationId>/', getLine),
+    path('getNextTurn/<str:servicetype>/<str:locationId>/',getNextTurn),
+    path('getLineArrays/<str:locationId>/',getLineArrays)
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

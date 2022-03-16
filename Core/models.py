@@ -25,6 +25,7 @@ class Service(models.Model):
     teller_id = models.ForeignKey(BankTeller, on_delete=models.CASCADE,null=True)
 
 class Location(models.Model):
+    id = models.BigAutoField(primary_key=True)
     locationName = models.CharField(max_length=50)
 class Ticket(models.Model):
     orderNumber = models.CharField(max_length=50)
