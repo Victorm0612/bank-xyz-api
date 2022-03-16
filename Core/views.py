@@ -4,7 +4,7 @@ from multiprocessing.connection import wait
 from Core.CRUD import *
 from Core.models import *
 from Core.login import login
-from Core.authentication import authUsr, authTeller, authServ, authTick, authRefresh
+from Core.authentication import authLocation, authUsr, authTeller, authServ, authTick, authRefresh
 from Core.WaitLine import WaitLine
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
@@ -140,7 +140,118 @@ def delUsr(request,idToDelete):
     else : 
         return JsonResponse("Token Not Valid", safe=False, status = 404)
 
+@csrf_exempt
+def createLocation(request):
+
+    authentication = authLocation(request)
+    if authentication == "Successfull" :
+        req = json.load(request)
+        name = req["name"]
+        send = [name]
+
+        if CreateLocation(send):
+            return JsonResponse("Location Created", safe=False)
+        else:
+            return JsonResponse("Location Couldn't Be Created", safe= False, status = 404)  
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
+
+
+@csrf_exempt
+def readLocation(request, name):
+
+    authentication = authLocation(request)
+    if authentication == "Successfull" :
+        
+        send = [name]
+        searchResult = ReadLocation(send)
+
+        ret = list(searchResult)
+
+        return JsonResponse(ret, safe=False)
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
+
+@csrf_exempt
+def readAllLocation(request):
+
+    authentication = authLocation(request)
+    if authentication == "Successfull" :
+        searchResult = ReadAllLocation()
+        ret = list(searchResult)
+        return JsonResponse(ret, safe=False)
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
+
     
+
+
+@csrf_exempt
+def modifyLocation(request):
+
+    authentication = authLocation(request)
+    if authentication == "Successfull" :
+
+        req = json.load(request)
+        idLocation = req["id"]
+        name = req["name"]
+        send = [idLocation,name]
+
+        if UpdateLocation(send):
+            return JsonResponse("Location Updated", safe=False)
+        else:
+            return JsonResponse("Location Couldn't Be Updated", safe=False, status = 404)
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)
+
+
+
+
+@csrf_exempt
+def delLocation(request,idToDelete):
+
+
+    authentication = authLocation(request)
+    if authentication == "Successfull" :
+        
+        send=[idToDelete]
+
+        if DeleteLocation(send):
+            return JsonResponse("Location Deleted", safe=False)
+        else:
+            return JsonResponse("Location Couldn't Be Deleted", safe=False, status = 404)
+    elif authentication == "Token expired":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "No Authorization Token Given":
+        return JsonResponse(authentication, safe=False, status = 404)
+    elif authentication == "User Not Authorized":
+        return JsonResponse(authentication, safe=False, status = 404)
+    else : 
+        return JsonResponse("Token Not Valid", safe=False, status = 404)    
 
 
 @csrf_exempt
@@ -396,11 +507,12 @@ def createTick(request):
         state = "0"
         servicetype = req["serviceType"]
         docNumber = req["docNumber"]
+        locationId = req["locationId"]
 
         orderNumber = getOrderNumberByServicetype(int(servicetype))
         userId= getNumberId(int(docNumber))
         serviceId= getTellerByServiceType(servicetype)
-        send = [orderNumber, state, serviceId ,userId]
+        send = [orderNumber, state, serviceId ,userId, locationId]
 
         
         aux = CreateTicket(send)
@@ -460,8 +572,9 @@ def modifyTick(request):
         arrivalTime = req["arrivalTime"]
         serviceId = req["serviceId_id"]
         userId = req["userId_id"]
+        locationId = req["locationId"]
         
-        send = [idTick, orderNumber, state, arrivalDate, arrivalTime, serviceId, userId]
+        send = [idTick, orderNumber, state, arrivalDate, arrivalTime, serviceId, userId, locationId]
 
         if UpdateTicket(send):
             return JsonResponse("Ticket Updated", safe=False)

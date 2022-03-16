@@ -87,6 +87,66 @@ def DeleteUser(args):
     else : 
         return False
         
+#
+# creates a new location in the table BankTeller
+#   args is an array of the arguments received
+#
+def CreateLocation(args):
+    # args order name
+    if Location.objects.filter(name = args[0]).exists():
+        return False
+    else: 
+        newLocation = Location(name=args[0])
+        newLocation.save()
+        return True
+
+#
+# search for one or more locations in the table BankTeller
+#   args is an array of the arguments received to do the search
+#
+def ReadLocation(args):
+    # args order name
+    search = Location.objects.filter(name__icontains = args[0])
+    search.order_by('id')
+    return search.values()
+
+def ReadAllLocation():
+    # args order name
+    search = Location.objects.all()
+    search.order_by('id')
+    return search.values()
+    
+#
+#  Update a location in the table BankTeller
+#   args is an array of the arguments received
+#
+def UpdateLocation(args):
+    # args order id, name
+    if Location.objects.filter(id = args[0]).exists():
+        locationToMod= Location.objects.get(id = args[0])
+        if args[1] != '':
+            locationToMod.name = args[1]
+        locationToMod.save()
+        return True
+    else:
+        return False
+
+    
+    
+#
+# Delete a location in the table BankTeller
+#   args is an array of the arguments received
+#
+def DeleteLocation(args):
+    # args order id
+    if Location.objects.filter(id = args[0]).exists() :
+        locationToDelete = Location.objects.get(id=args[0])
+        locationToDelete.delete()
+        return True
+    else : 
+        return False
+        
+    
 
 #
 # creates a new bank teller in the table BankTeller
@@ -225,11 +285,13 @@ def CreateTicket(args):
     else: 
         service = Service.objects.get(service_id=args[2])
         user = User.objects.get(id=args[3])
+        location = Location.objects.get(id=args[4])
         newTicket = Ticket(
                         orderNumber=args[0],
                         state=int(args[1]),
                         serviceId=service,
-                        userId=user
+                        userId=user,
+                        locationId=location
                         )
         newTicket.save()
         search = Ticket.objects.filter(orderNumber=args[0]).values().first()
@@ -335,6 +397,9 @@ def UpdateTicket(args):
         
         if args[6] != '':
             ticketToMod.userId = User.objects.get(id = int(args[6]))
+
+        if args[7] != '':
+            ticketToMod.locationId = Location.objects.get(id = int(args[7]))
 
         ticketToMod.save()
         return True

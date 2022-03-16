@@ -24,12 +24,16 @@ class Service(models.Model):
     serviceType = models.IntegerField()
     teller_id = models.ForeignKey(BankTeller, on_delete=models.CASCADE,null=True)
 
+class Location(models.Model):
+    locationName = models.CharField(max_length=50)
 class Ticket(models.Model):
     orderNumber = models.CharField(max_length=50)
     userId = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     serviceId = models.ForeignKey(Service, on_delete=models.CASCADE,null=True)
+    LocationId = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
     state = models.IntegerField()
     arrivalDate = models.DateField(auto_now_add=True)
     arrivalTime = models.TimeField(auto_now_add=True)
+    updateTime = models.TimeField(auto_now_add=True)
 
 
