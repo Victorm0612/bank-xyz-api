@@ -56,6 +56,8 @@ class WaitLine():
         search = Ticket.objects.get(id=nextTurn)
         search.state = 1
         search.serviceId = Service.objects.get(service_id = typeTeller["service_id"])
+        now=datetime.now()
+        search.updateTime = now.time()
         search.save()
         
         return Ticket.objects.filter(id=nextTurn).values().first()
@@ -190,7 +192,7 @@ class WaitLine():
             return timeInWaiting
     
     def __actualTime(self):
-        time = datetime.utcnow()
+        time = datetime.now()
         intTime = time.year * 100000 + time.month * 10000 + time.day * 1000 + time.hour * 100 + time.minute * 10 + time.second
         return intTime
 

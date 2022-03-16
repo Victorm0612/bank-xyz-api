@@ -49,6 +49,12 @@ urlpatterns = [
     path('createUserAdmin/',createUserAdmin),
     path('getLine/<str:locationId>/', getLine),
     path('getNextTurn/<str:servicetype>/<str:locationId>/',getNextTurn),
-    path('getLineArrays/<str:locationId>/',getLineArrays)
+    path('getLineArrays/<str:locationId>/',getLineArrays),
+    path('getLocationUseData/<str:locationId>/',getLocationUseData),
+    path('getAvgTimeByLocation/<str:locationId>/',getAvgTimeByLocation),
+
+    path('getClientsByDay/<str:locationId>/<str:date>/',getClientsByDay),
+    path('getClientsByMonth/<str:locationId>/<str:month>/',getClientsByMonth)
+
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
