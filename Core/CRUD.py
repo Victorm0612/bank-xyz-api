@@ -93,10 +93,10 @@ def DeleteUser(args):
 #
 def CreateLocation(args):
     # args order name
-    if Location.objects.filter(name = args[0]).exists():
+    if Location.objects.filter(locationName = args[0]).exists():
         return False
     else: 
-        newLocation = Location(name=args[0])
+        newLocation = Location(locationName=args[0])
         newLocation.save()
         return True
 
