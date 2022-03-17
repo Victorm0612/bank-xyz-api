@@ -106,7 +106,7 @@ def CreateLocation(args):
 #
 def ReadLocation(args):
     # args order name
-    search = Location.objects.filter(name__icontains = args[0])
+    search = Location.objects.filter(id = args[0])
     search.order_by('id')
     return search.values()
 

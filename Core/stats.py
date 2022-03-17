@@ -10,7 +10,10 @@ def useByCashier(location):
 
     cashiers = Ticket.objects.filter(LocationId=location).values('serviceId').annotate(count= Count('serviceId')).order_by('count')
 
-    return list(cashiers)
+    if cashiers.exists():
+        return list(cashiers)
+    else: 
+        return list()
 
 def clientsByDay(location,date):
 
@@ -47,6 +50,10 @@ def avgTimeByLocation(location):
     timeWaiting = list()
 
     search = list(Ticket.objects.filter(LocationId=location).values('arrivalTime','updateTime'))
+
+    if len(search) == 0:
+        return "0"
+
     for i in search:
         timeWaiting.append(timedifference(i["arrivalTime"],i["updateTime"]))
 
