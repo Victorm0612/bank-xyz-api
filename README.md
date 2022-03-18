@@ -17,4 +17,4 @@ Now you can install Django:
 `python3 -m pip install Django`
 
 To run server execute:
-`python3 manage.py runserver`
+`python3 manage.py runserver --settings=bankxyzapi.settings.local`
