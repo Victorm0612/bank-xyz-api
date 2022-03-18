@@ -125,7 +125,7 @@ def UpdateLocation(args):
     if Location.objects.filter(id = args[0]).exists():
         locationToMod= Location.objects.get(id = args[0])
         if args[1] != '':
-            locationToMod.name = args[1]
+            locationToMod.locationName = args[1]
         locationToMod.save()
         return True
     else:

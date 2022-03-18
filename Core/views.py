@@ -233,13 +233,13 @@ def modifyLocation(request):
 
 
 @csrf_exempt
-def delLocation(request,idToDelete):
+def delLocation(request,idToLocation):
 
 
     authentication = authLocation(request)
     if authentication == "Successfull" :
         
-        send=[idToDelete]
+        send=[idToLocation]
 
         if DeleteLocation(send):
             return JsonResponse("Location Deleted", safe=False)
